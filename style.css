@@ -1083,3 +1083,209 @@ body {
     font-size: 0.8rem;
   }
 }
+
+/* =========================================================
+   THÈME 1 : SIGNETS RUNIQUES, LETTRINE, SCEAUX & PARCHEMIN NOCTURNE
+   ========================================================= */
+
+/* 1. Signets runiques sur le grimoire */
+.book-binding {
+  position: relative;
+}
+
+.rune-bookmarks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.rune-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 6px;
+  background: linear-gradient(to bottom, #2b1814, #1b0f0c);
+  color: #d9c298;
+  font-family: var(--font-title);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.rune-tab:hover:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  transform: translateY(-1px);
+}
+
+.rune-tab.is-active {
+  background: linear-gradient(to bottom, #8d241e, var(--crimson));
+  border-color: var(--gold-bright);
+  color: #fff3d6;
+  box-shadow: 0 0 12px rgba(201, 162, 75, 0.35);
+}
+
+.rune-tab:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.rune-glyph {
+  font-size: 1rem;
+  color: var(--gold-bright);
+}
+
+/* 2. Séparateurs runiques dans le menu déroulant */
+.recipe-title-select optgroup {
+  background: #e5d1a8;
+  color: var(--crimson);
+  font-family: var(--font-title);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+/* 3. Lettrine enluminée sur la première étape */
+.steps-list li:first-child::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 2.55rem;
+  line-height: 0.85;
+  padding: 4px 9px 2px 0;
+  color: var(--crimson);
+  text-shadow: 1px 1px 0 rgba(201, 162, 75, 0.55);
+}
+
+/* 4. Sceaux d'équipement alchimique */
+.equipment-seals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.equip-seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border: 1px solid rgba(158, 116, 43, 0.45);
+  border-radius: 999px;
+  background: rgba(201, 162, 75, 0.16);
+  color: #4b2e16;
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* 5. Mode Parchemin Nocturne */
+.btn-night-toggle.is-active {
+  background: radial-gradient(circle at 50% 35%, #2f3b52 0%, #151b26 100%);
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+  box-shadow: 0 0 12px rgba(232, 199, 117, 0.4);
+}
+
+body.night-parchment .book-spread {
+  background:
+    radial-gradient(circle at 25% 20%, rgba(255, 220, 150, 0.04), transparent 55%),
+    linear-gradient(to right, #181412 0%, #211c19 6%, #211c19 47%, #14100e 50%, #211c19 53%, #211c19 94%, #181412 100%);
+  border-color: #4b3b2c;
+  color: #eadcc5;
+  box-shadow: inset 0 0 42px rgba(0, 0, 0, 0.65);
+}
+
+body.night-parchment .book-page-left {
+  border-right-color: rgba(201, 162, 75, 0.18);
+}
+
+body.night-parchment .recipe-title-select {
+  color: var(--gold-bright);
+  border-bottom-color: rgba(232, 199, 117, 0.35);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23e8c775' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+body.night-parchment .recipe-title-select option,
+body.night-parchment .recipe-title-select optgroup {
+  background: #211c19;
+  color: #eadcc5;
+}
+
+body.night-parchment .recipe-category {
+  background: rgba(201, 162, 75, 0.14);
+  border-color: rgba(201, 162, 75, 0.35);
+  color: var(--gold-bright);
+}
+
+body.night-parchment .recipe-meta {
+  color: #bfa988;
+  border-color: rgba(201, 162, 75, 0.25);
+}
+
+body.night-parchment .section-heading {
+  color: var(--gold-bright);
+}
+
+body.night-parchment .section-header-row {
+  border-bottom-color: rgba(201, 162, 75, 0.25);
+}
+
+body.night-parchment .ingredients-list li {
+  border-bottom-color: rgba(201, 162, 75, 0.18);
+}
+
+body.night-parchment .steps-list li:first-child::first-letter,
+body.night-parchment .steps-list li::marker {
+  color: var(--gold-bright);
+}
+
+body.night-parchment .tag {
+  background: rgba(92, 138, 108, 0.18);
+  border-color: rgba(122, 173, 139, 0.35);
+  color: #9fd1b0;
+}
+
+body.night-parchment .equip-seal {
+  background: rgba(201, 162, 75, 0.14);
+  border-color: rgba(201, 162, 75, 0.35);
+  color: var(--gold-bright);
+}
+
+body.night-parchment .recipe-notes {
+  background: rgba(201, 162, 75, 0.08);
+  border-color: rgba(201, 162, 75, 0.28);
+  border-left-color: var(--gold);
+  color: #dfceb2;
+}
+
+body.night-parchment .inline-timer-btn,
+body.night-parchment .btn-serving,
+body.night-parchment .btn-undo-step {
+  background: rgba(201, 162, 75, 0.15);
+  border-color: rgba(201, 162, 75, 0.4);
+  color: var(--gold-bright);
+}
+
+body.night-parchment .recipe-card {
+  background: linear-gradient(155deg, #241e1b 0%, #191412 100%);
+  border-color: #4b3b2c;
+  color: #eadcc5;
+}
+
+body.night-parchment .card-title {
+  color: var(--gold-bright);
+}
+
+body.night-parchment .card-meta {
+  color: #bfa988;
+}
+
+@media (max-width: 860px) {
+  body.night-parchment .book-spread {
+    background: linear-gradient(to bottom, #211c19 0%, #181412 100%);
+  }
+}
