@@ -112,12 +112,16 @@
               <path d="M7.5 20l-1 2M16.5 20l1 2"/>
             </svg>
           </button>
+  <button id="btn-night-parchment" class="btn btn-secondary btn-night-toggle" type="button" aria-pressed="false" title="Basculer en mode Parchemin Nocturne">
+            <span id="night-parchment-icon">☾</span>
+          </button>
           <button id="btn-edit-current" class="btn btn-secondary" type="button">Réécrire</button>
           <button id="btn-delete-current" class="btn btn-danger" type="button">Bannir</button>
         </div>
       </div>
 
-      <div class="book-binding">
+   <div class="book-binding">
+        <nav id="rune-bookmarks" class="rune-bookmarks" aria-label="Signets runiques par catégorie"></nav>
         <article id="book-spread" class="book-spread"></article>
       </div>
     </section>
