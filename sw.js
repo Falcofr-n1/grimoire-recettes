@@ -1,4 +1,4 @@
-const CACHE_NAME = "grimoire-v7";
+const CACHE_NAME = "grimoire-v12";
 const ASSETS = [
   "./",
   "./index.html",
@@ -27,10 +27,12 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: "no-store" })
       .then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        if (res.ok && event.request.url.startsWith(self.location.origin)) {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
         return res;
       })
       .catch(() => caches.match(event.request))
