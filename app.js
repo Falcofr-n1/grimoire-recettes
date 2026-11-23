@@ -305,6 +305,13 @@
       }
     });
     $("btn-close-grimoire").addEventListener("click", closeGrimoire);
+    $("btn-toggle-topbar").addEventListener("click", () => {
+      const topbar = $("topbar");
+      const collapsed = topbar.classList.toggle("is-collapsed");
+      $("btn-toggle-topbar").setAttribute("aria-expanded", String(!collapsed));
+      $("topbar-toggle-icon").textContent = collapsed ? "▼" : "▲";
+      $("topbar-toggle-label").textContent = collapsed ? "Menu" : "Rétracter";
+    });
 
     $("btn-view-book").addEventListener("click", () => switchView("book"));
     $("btn-view-grid").addEventListener("click", () => switchView("grid"));
