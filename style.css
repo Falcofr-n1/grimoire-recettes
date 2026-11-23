@@ -352,15 +352,64 @@ body {
   position: sticky;
   top: 0;
   z-index: 20;
+  background: linear-gradient(to bottom, #241412, #1a0f0d);
+  border-bottom: 1px solid var(--gold-dim);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.topbar-inner {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 12px 24px;
-  background: linear-gradient(to bottom, #241412, #1a0f0d);
-  border-bottom: 1px solid var(--gold-dim);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  max-height: 220px;
+  overflow: hidden;
+  transition: max-height 0.28s ease, padding 0.28s ease, opacity 0.22s ease;
+}
+
+.topbar.is-collapsed {
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.topbar.is-collapsed .topbar-inner {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+}
+
+.topbar-toggle {
+  pointer-events: auto;
+  position: absolute;
+  right: 20px;
+  bottom: -24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 12px;
+  border: 1px solid var(--gold-dim);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  background: #1d110e;
+  color: var(--gold-bright);
+  font-family: var(--font-title);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+.topbar-toggle:hover {
+  background: #2f1b16;
+  border-color: var(--gold);
 }
 
 .brand {
