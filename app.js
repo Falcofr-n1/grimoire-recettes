@@ -6,6 +6,79 @@
   let wakeLock = null;
   let currentServings = null;
   let lastRecipeId = null;
+  const CATEGORY_RUNES = [
+    { name: "Entrée", rune: "ᚠ", label: "Entrées" },
+    { name: "Plat", rune: "ᚢ", label: "Plats" },
+    { name: "Accompagnement", rune: "ᚦ", label: "Accompagnements" },
+    { name: "Dessert", rune: "ᚨ", label: "Desserts" },
+    { name: "Boisson / Base", rune: "ᚱ", label: "Boissons & Bases" }
+  ];
+
+  const EQUIPMENT_RULES = [
+    { regex: /\bthermomix\b/i, icon: "⚗️", label: "Thermomix" },
+    { regex: /\b(four|enfourner|rôti|gratin)\b/i, icon: "🔥", label: "Four" },
+    { regex: /\b(cuiseur [àa] riz|rice cooker)\b/i, icon: "🍚", label: "Cuiseur à riz" },
+    { regex: /\b(barbecue|bbq|plancha|grill)\b/i, icon: "🍖", label: "Grill / BBQ" },
+    { regex: /\b(sans cuisson|cru)\b/i, icon: "❄️", label: "Sans cuisson" }
+  ];
+
+  function detectEquipment(recipe) {
+    const haystack = [
+      recipe.title,
+      (recipe.tags || []).join(" "),
+      (recipe.steps || []).join(" "),
+      recipe.notes || ""
+    ].join(" ");
+    return EQUIPMENT_RULES.filter((rule) => rule.regex.test(haystack));
+  }
+
+  function renderRuneBookmarks(activeCategory) {
+    const nav = $("rune-bookmarks");
+    if (!nav) return;
+    nav.innerHTML = CATEGORY_RUNES.map((item) => {
+      const firstIndex = recipes.findIndex((r) => r.category === item.name);
+      const isActive = activeCategory === item.name;
+      return `<button type="button" class="rune-tab ${isActive ? "is-active" : ""}" data-first-index="${firstIndex}" ${firstIndex === -1 ? "disabled" : ""} title="Aller aux ${item.label}">
+        <span class="rune-glyph">${item.rune}</span>
+        <span>${item.label}</span>
+      </button>`;
+    }).join("");
+
+    nav.querySelectorAll(".rune-tab:not(:disabled)").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const nextIdx = Number(btn.dataset.firstIndex);
+        if (nextIdx !== -1 && nextIdx !== currentIndex) {
+          const dir = nextIdx >= currentIndex ? "next" : "prev";
+          currentIndex = nextIdx;
+          renderBook();
+          animatePageTurn(dir);
+        }
+      });
+    });
+  }
+
+  function buildGroupedTitleOptions() {
+    const knownCats = CATEGORY_RUNES.map((c) => c.name);
+    const groups = CATEGORY_RUNES.map((cat) => {
+      const items = recipes
+        .map((item, i) => ({ item, i }))
+        .filter(({ item }) => item.category === cat.name);
+      if (!items.length) return "";
+      const opts = items.map(({ item, i }) =>
+        `<option value="${i}" ${i === currentIndex ? "selected" : ""}>${escapeHtml(item.title)}</option>`
+      ).join("");
+      return `<optgroup label="─── ${cat.rune} ${cat.label} ${cat.rune} ───">${opts}</optgroup>`;
+    }).join("");
+
+    const others = recipes
+      .map((item, i) => ({ item, i }))
+      .filter(({ item }) => !knownCats.includes(item.category));
+    const otherGroup = others.length
+      ? `<optgroup label="─── ✦ Autres ✦ ───">${others.map(({ item, i }) => `<option value="${i}" ${i === currentIndex ? "selected" : ""}>${escapeHtml(item.title)}</option>`).join("")}</optgroup>`
+      : "";
+
+    return groups + otherGroup;
+  }
 
   const $ = (id) => document.getElementById(id);
 
@@ -111,7 +184,8 @@ function formatScaledIngredient(line, ratio) {
         : "Recueil de formules & potions";
     }
 
-    if (recipes.length === 0) {
+if (recipes.length === 0) {
+      renderRuneBookmarks("");
       indicator.textContent = "0 / 0";
       spread.innerHTML = `<div class="empty-state"><h3>Aucune formule dans le grimoire</h3><p>Clique sur <strong>Importer</strong> ou <strong>+ Formule</strong> pour inscrire ta première page.</p></div>`;
       return;
@@ -121,6 +195,8 @@ function formatScaledIngredient(line, ratio) {
     if (currentIndex < 0) currentIndex = 0;
 
     const r = recipes[currentIndex];
+    renderRuneBookmarks(r.category);
+
     const baseServings = Number(r.servings) || 1;
     if (lastRecipeId !== r.id) {
       lastRecipeId = r.id;
@@ -130,9 +206,11 @@ function formatScaledIngredient(line, ratio) {
     const totalTime = (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0);
     indicator.textContent = `${currentIndex + 1} / ${recipes.length}`;
 
-    const titleOptions = recipes.map((item, i) =>
-      `<option value="${i}" ${i === currentIndex ? "selected" : ""}>${escapeHtml(item.title)}</option>`
-    ).join("");
+    const titleOptions = buildGroupedTitleOptions();
+    const equipments = detectEquipment(r);
+    const equipmentHtml = equipments.length
+      ? `<div class="equipment-seals">${equipments.map((eq) => `<span class="equip-seal">${eq.icon} ${eq.label}</span>`).join("")}</div>`
+      : "";
 
     spread.innerHTML = `
       <div class="book-tap-zone book-tap-left" title="Folio précédent"></div>
@@ -156,6 +234,7 @@ function formatScaledIngredient(line, ratio) {
           </span>
         </div>
         ${r.tags && r.tags.length ? `<div class="tag-list">${r.tags.map((t) => `<span class="tag">#${escapeHtml(t)}</span>`).join("")}</div>` : ""}
+        ${equipmentHtml}
         <div class="section-header-row">
           <h3 class="section-heading">Ingrédients</h3>
           <button type="button" id="btn-undo-ing" class="btn-undo-step hidden">↶ Revenir</button>
@@ -597,6 +676,22 @@ function formatScaledIngredient(line, ratio) {
       if (diff < -60) goNext();
     }, { passive: true });
 $("btn-wake-lock").addEventListener("click", toggleWakeLock);
+    const nightBtn = $("btn-night-parchment");
+    const nightIcon = $("night-parchment-icon");
+    const applyNightMode = (enabled) => {
+      document.body.classList.toggle("night-parchment", enabled);
+      nightBtn.classList.toggle("is-active", enabled);
+      nightBtn.setAttribute("aria-pressed", String(enabled));
+      nightIcon.textContent = enabled ? "☀" : "☾";
+    };
+    if (localStorage.getItem("grimoire_night_mode") === "1") {
+      applyNightMode(true);
+    }
+    nightBtn.addEventListener("click", () => {
+      const nextState = !document.body.classList.contains("night-parchment");
+      localStorage.setItem("grimoire_night_mode", nextState ? "1" : "0");
+      applyNightMode(nextState);
+    });
     $("btn-edit-current").addEventListener("click", () => {
       if (recipes[currentIndex]) openEditor(recipes[currentIndex]);
     });
