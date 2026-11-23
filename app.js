@@ -3,6 +3,9 @@
   let currentIndex = 0;
   let editingId = null;
   let isOpening = false;
+  let wakeLock = null;
+  let currentServings = null;
+  let lastRecipeId = null;
 
   const $ = (id) => document.getElementById(id);
 
@@ -57,7 +60,47 @@
     else renderBook();
   }
 
-function renderBook() {
+function formatScaledIngredient(line, ratio) {
+    if (!ratio || Math.abs(ratio - 1) < 0.001) return escapeHtml(line);
+    const updated = String(line).replace(
+      /(^|\s)(\d+(?:[.,]\d+)?|\d+\s*\/\s*\d+)(?=\s*(?:g|kg|mg|ml|cl|dl|l|c\.|cuill|pinc|tranche|gousse|oeuf|œuf|filet|boîte|sachet|verre|tasse|pot|feuille|brin|pomme|oignon|carotte|tomate|banane|courgette|citron|escalope|pavé|blanc|jaune|\b))/i,
+      (match, prefix, numStr) => {
+        let val = 0;
+        if (numStr.includes("/")) {
+          const [a, b] = numStr.split("/").map(Number);
+          val = b ? a / b : 0;
+        } else {
+          val = parseFloat(numStr.replace(",", "."));
+        }
+        if (!val) return match;
+        const scaled = val * ratio;
+        const rounded = scaled >= 10
+          ? Math.round(scaled)
+          : Math.round(scaled * 10) / 10;
+        return `${prefix}${String(rounded).replace(".", ",")}`;
+      }
+    );
+    return escapeHtml(updated);
+  }
+
+  function formatStepWithTimers(stepText) {
+    const escaped = escapeHtml(stepText);
+    return escaped.replace(
+      /\b(\d+(?:[.,]\d+)?)\s*(h(?:eures?)?|min(?:utes?)?|sec(?:ondes?)?)\b/gi,
+      (full, rawNum, unit) => {
+        const val = parseFloat(rawNum.replace(",", "."));
+        if (!val || val <= 0) return full;
+        const u = unit.toLowerCase();
+        let seconds = 0;
+        if (u.startsWith("h")) seconds = Math.round(val * 3600);
+        else if (u.startsWith("min")) seconds = Math.round(val * 60);
+        else seconds = Math.round(val);
+        return `<button type="button" class="inline-timer-btn" data-seconds="${seconds}" data-label="${full}" title="Lancer un minuteur de ${full}">⏱ ${full}</button>`;
+      }
+    );
+  }
+
+  function renderBook() {
     const spread = $("book-spread");
     const indicator = $("book-page-indicator");
     const coverCount = $("cover-recipe-count");
@@ -78,6 +121,12 @@ function renderBook() {
     if (currentIndex < 0) currentIndex = 0;
 
     const r = recipes[currentIndex];
+    const baseServings = Number(r.servings) || 1;
+    if (lastRecipeId !== r.id) {
+      lastRecipeId = r.id;
+      currentServings = baseServings;
+    }
+    const ratio = currentServings / baseServings;
     const totalTime = (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0);
     indicator.textContent = `${currentIndex + 1} / ${recipes.length}`;
 
@@ -86,6 +135,8 @@ function renderBook() {
     ).join("");
 
     spread.innerHTML = `
+      <div class="book-tap-zone book-tap-left" title="Folio précédent"></div>
+      <div class="book-tap-zone book-tap-right" title="Folio suivant"></div>
       <div class="book-page book-page-left">
         <span class="recipe-category">${escapeHtml(r.category)}</span>
         <div class="recipe-title-wrapper">
@@ -97,23 +148,35 @@ function renderBook() {
           <span>⏱ Prépa : <strong>${r.prepTime} min</strong></span>
           <span>🔥 Cuisson : <strong>${r.cookTime} min</strong></span>
           <span>⏳ Total : <strong>${totalTime} min</strong></span>
-          <span>🍽 Portions : <strong>${r.servings}</strong></span>
+          <span class="servings-control">
+            🍽 Portions :
+            <button type="button" id="btn-servings-minus" class="btn-serving" aria-label="Réduire les portions">−</button>
+            <strong>${currentServings}</strong>
+            <button type="button" id="btn-servings-plus" class="btn-serving" aria-label="Augmenter les portions">+</button>
+          </span>
         </div>
         ${r.tags && r.tags.length ? `<div class="tag-list">${r.tags.map((t) => `<span class="tag">#${escapeHtml(t)}</span>`).join("")}</div>` : ""}
-        <h3 class="section-heading">Ingrédients</h3>
+        <div class="section-header-row">
+          <h3 class="section-heading">Ingrédients</h3>
+          <button type="button" id="btn-undo-ing" class="btn-undo-step hidden">↶ Revenir</button>
+        </div>
         <ul class="ingredients-list">
-          ${r.ingredients.map((ing) => `<li>${escapeHtml(ing)}</li>`).join("")}
+          ${r.ingredients.map((ing) => `<li title="Cliquer pour masquer">${formatScaledIngredient(ing, ratio)}</li>`).join("")}
         </ul>
       </div>
       <div class="book-page book-page-right">
-        <h3 class="section-heading">Incantation &amp; Préparation</h3>
+        <div class="section-header-row">
+          <h3 class="section-heading">Incantation &amp; Préparation</h3>
+          <button type="button" id="btn-undo-step" class="btn-undo-step hidden">↶ Revenir à la dernière étape</button>
+        </div>
         <ol class="steps-list">
-          ${r.steps.map((st) => `<li>${escapeHtml(st)}</li>`).join("")}
+          ${r.steps.map((st) => `<li title="Cliquer pour masquer cette étape">${formatStepWithTimers(st)}</li>`).join("")}
         </ol>
         ${r.notes ? `<div class="recipe-notes"><strong>Notes de l'alchimiste :</strong><br>${escapeHtml(r.notes)}</div>` : ""}
       </div>
     `;
 
+    // Changement de recette via le titre
     $("book-toc").addEventListener("change", (e) => {
       const nextIdx = Number(e.target.value);
       const dir = nextIdx >= currentIndex ? "next" : "prev";
@@ -121,8 +184,64 @@ function renderBook() {
       renderBook();
       animatePageTurn(dir);
     });
-  }
 
+    // Ajustement des portions
+    $("btn-servings-minus").addEventListener("click", () => {
+      if (currentServings > 1) {
+        currentServings--;
+        renderBook();
+      }
+    });
+    $("btn-servings-plus").addEventListener("click", () => {
+      currentServings++;
+      renderBook();
+    });
+
+    // Zones tactiles latérales
+    spread.querySelector(".book-tap-left").addEventListener("click", goPrev);
+    spread.querySelector(".book-tap-right").addEventListener("click", goNext);
+
+    // Masquage + pile d'annulation (Ingrédients)
+    const hiddenIngStack = [];
+    const undoIngBtn = $("btn-undo-ing");
+    spread.querySelectorAll(".ingredients-list li").forEach((li) => {
+      li.addEventListener("click", () => {
+        li.classList.add("is-masked-item");
+        hiddenIngStack.push(li);
+        undoIngBtn.classList.remove("hidden");
+      });
+    });
+    undoIngBtn.addEventListener("click", () => {
+      const last = hiddenIngStack.pop();
+      if (last) last.classList.remove("is-masked-item");
+      if (hiddenIngStack.length === 0) undoIngBtn.classList.add("hidden");
+    });
+
+    // Masquage + pile d'annulation (Étapes)
+    const hiddenStepStack = [];
+    const undoStepBtn = $("btn-undo-step");
+    spread.querySelectorAll(".steps-list li").forEach((li) => {
+      li.addEventListener("click", (e) => {
+        if (e.target.closest(".inline-timer-btn")) return;
+        li.classList.add("is-masked-item");
+        hiddenStepStack.push(li);
+        undoStepBtn.classList.remove("hidden");
+      });
+    });
+    undoStepBtn.addEventListener("click", () => {
+      const last = hiddenStepStack.pop();
+      if (last) last.classList.remove("is-masked-item");
+      if (hiddenStepStack.length === 0) undoStepBtn.classList.add("hidden");
+    });
+
+    // Lancement des minuteurs
+    spread.querySelectorAll(".inline-timer-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        startKitchenTimer(Number(btn.dataset.seconds), btn.dataset.label);
+      });
+    });
+  }
   function renderGrid() {
     const query = $("search-text").value.trim().toLowerCase();
     const cat = $("filter-category").value;
@@ -307,6 +426,102 @@ function renderBook() {
     }
   }
 
+  function playTimerChime() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [523.25, 659.25, 783.99].forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.15, ctx.currentTime + idx * 0.18);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.18 + 0.6);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + idx * 0.18);
+        osc.stop(ctx.currentTime + idx * 0.18 + 0.65);
+      });
+    } catch (_) {}
+  }
+
+  function startKitchenTimer(totalSeconds, label) {
+    const dock = $("timer-dock");
+    if (!dock) return;
+    let remaining = totalSeconds;
+    let paused = false;
+
+    const pill = document.createElement("div");
+    pill.className = "timer-pill";
+
+    const formatClock = (sec) => {
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = sec % 60;
+      const mm = String(m).padStart(2, "0");
+      const ss = String(s).padStart(2, "0");
+      return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+    };
+
+    pill.innerHTML = `
+      <span>⏱ <strong>${escapeHtml(label)}</strong> · <span class="timer-clock">${formatClock(remaining)}</span></span>
+      <span class="timer-pill-actions">
+        <button type="button" class="timer-pill-btn timer-pause" title="Pause / Reprendre">❚❚</button>
+        <button type="button" class="timer-pill-btn timer-close" title="Fermer">✕</button>
+      </span>
+    `;
+    dock.appendChild(pill);
+
+    const clockEl = pill.querySelector(".timer-clock");
+    const pauseBtn = pill.querySelector(".timer-pause");
+
+    const interval = setInterval(() => {
+      if (paused) return;
+      remaining--;
+      if (remaining <= 0) {
+        clearInterval(interval);
+        clockEl.textContent = "00:00";
+        pill.classList.add("is-finished");
+        playTimerChime();
+      } else {
+        clockEl.textContent = formatClock(remaining);
+      }
+    }, 1000);
+
+    pauseBtn.addEventListener("click", () => {
+      paused = !paused;
+      pauseBtn.textContent = paused ? "▶" : "❚❚";
+    });
+
+    pill.querySelector(".timer-close").addEventListener("click", () => {
+      clearInterval(interval);
+      pill.remove();
+    });
+  }
+
+  async function toggleWakeLock() {
+    const btn = $("btn-wake-lock");
+    if (!("wakeLock" in navigator)) {
+      alert("Ton navigateur ne supporte pas le maintien de l'écran allumé.");
+      return;
+    }
+    try {
+      if (wakeLock) {
+        await wakeLock.release();
+        wakeLock = null;
+        btn.classList.remove("is-active");
+        btn.setAttribute("aria-pressed", "false");
+      } else {
+        wakeLock = await navigator.wakeLock.request("screen");
+        btn.classList.add("is-active");
+        btn.setAttribute("aria-pressed", "true");
+        wakeLock.addEventListener("release", () => {
+          wakeLock = null;
+          btn.classList.remove("is-active");
+          btn.setAttribute("aria-pressed", "false");
+        });
+      }
+    } catch (_) {}
+  }
   function bindEvents() {
     $("grimoire-book").addEventListener("click", openGrimoire);
     $("grimoire-book").addEventListener("keydown", (e) => {
@@ -381,7 +596,7 @@ function renderBook() {
       if (diff > 60) goPrev();
       if (diff < -60) goNext();
     }, { passive: true });
-
+$("btn-wake-lock").addEventListener("click", toggleWakeLock);
     $("btn-edit-current").addEventListener("click", () => {
       if (recipes[currentIndex]) openEditor(recipes[currentIndex]);
     });
