@@ -1289,3 +1289,15 @@ body.night-parchment .card-meta {
     background: linear-gradient(to bottom, #211c19 0%, #181412 100%);
   }
 }
+/* Bloc Ingrédients pliable en entier (sans masquage ligne par ligne) */
+.ingredients-list li {
+  cursor: default;
+}
+
+.ingredients-list li:hover {
+  background: transparent;
+}
+
+.ingredients-list.is-collapsed {
+  display: none;
+}
