@@ -365,14 +365,6 @@ function renderBook() {
       btn.addEventListener("click", () => $(btn.dataset.close).classList.add("hidden"));
     });
 
-    $("book-toc").addEventListener("change", (e) => {
-      const nextIdx = Number(e.target.value);
-      const dir = nextIdx >= currentIndex ? "next" : "prev";
-      currentIndex = nextIdx;
-      renderBook();
-      animatePageTurn(dir);
-    });
-
     $("btn-prev-page").addEventListener("click", goPrev);
     $("btn-next-page").addEventListener("click", goNext);
 
