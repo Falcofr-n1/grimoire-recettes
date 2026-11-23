@@ -78,13 +78,14 @@
       <nav class="nav-actions">
         <button id="btn-close-grimoire" class="btn btn-secondary" type="button" title="Refermer le grimoire">Couverture</button>
         <button id="btn-view-book" class="btn btn-tab active" type="button">Feuilleter</button>
-        <button id="btn-view-grid" class="btn btn-tab" type="button">Index</button>
+       <button id="btn-view-grid" class="btn btn-tab" type="button">Index</button>
+        <button id="btn-view-planner" class="btn btn-tab" type="button">Semainier</button>
         <button id="btn-new-recipe" class="btn btn-primary" type="button">+ Formule</button>
         <label id="btn-import-label" class="btn btn-secondary" style="cursor:pointer;">
           Importer (PDF/Word/Photo)
           <input id="quick-import-input" type="file" accept=".pdf,.docx,.txt,.md,image/*" hidden>
         </label>
-        <button id="btn-sync-now" class="btn btn-secondary" type="button" title="Rafraîchir depuis Google Sheets">↻</button>
+        <button id="btn-sync-now" class="btn btn-secondary btn-sync-status" type="button" title="Rafraîchir depuis Google Sheets">↻<span id="sync-dot" class="sync-dot"></span></button>
         <button id="btn-sync-config" class="btn btn-secondary" type="button">Synchro</button>
       </nav>
     </div>
@@ -98,10 +99,11 @@
     <!-- VUE LIVRE -->
     <section id="view-book" class="view active">
       <div class="book-controls">
-        <div class="book-nav">
+       <div class="book-nav">
           <button id="btn-prev-page" class="btn btn-secondary" type="button">← Folio préc.</button>
           <span id="book-page-indicator" class="page-indicator">0 / 0</span>
           <button id="btn-next-page" class="btn btn-secondary" type="button">Folio suiv. →</button>
+          <button id="btn-random-recipe" class="btn btn-secondary" type="button" title="Dé du Destin : tirer un plat au sort">🎲</button>
         </div>
 <div class="book-item-actions">
           <button id="btn-wake-lock" class="btn btn-secondary btn-cauldron" type="button" aria-pressed="false" title="Mode Cuisine : garder l'écran allumé">
@@ -115,6 +117,7 @@
   <button id="btn-night-parchment" class="btn btn-secondary btn-night-toggle" type="button" aria-pressed="false" title="Basculer en mode Parchemin Nocturne">
             <span id="night-parchment-icon">☾</span>
           </button>
+  <button id="btn-print-recipe" class="btn btn-secondary" type="button" title="Imprimer ou enregistrer en PDF propre">🖨</button>
           <button id="btn-edit-current" class="btn btn-secondary" type="button">Réécrire</button>
           <button id="btn-delete-current" class="btn btn-danger" type="button">Bannir</button>
         </div>
@@ -126,7 +129,7 @@
       </div>
     </section>
 
-    <!-- VUE RECHERCHE -->
+  <!-- VUE RECHERCHE -->
     <section id="view-grid" class="view">
       <div class="search-panel">
         <input id="search-text" type="search" placeholder="Chercher une formule, un ingrédient, une étape, une rune...">
@@ -147,8 +150,23 @@
         </select>
         <input id="filter-exclude" type="text" placeholder="Exclure un ingrédient (ex: courgette)">
       </div>
-      <div id="grid-stats" class="grid-stats"></div>
-      <div id="recipe-grid" class="recipe-grid"></div>
+      <div id="quick-filters" class="quick-filters">
+        <button type="button" class="quick-chip" data-qf="express">⚡ Express (≤ 20 min prépa)</button>
+        <button type="button" class="quick-chip" data-qf="no-courgette">Sans courgette</button>
+        <button type="button" class="quick-chip" data-qf="no-gnocchi">Sans gnocchi</button>
+        <button type="button" class="quick-chip" data-qf="batch">Batch cooking</button>
+      </div>
+      
+    <!-- VUE SEMAINIER & COURSES -->
+    <section id="view-planner" class="view">
+      <div class="planner-header">
+        <h2>Menu de la Semaine</h2>
+        <div class="planner-actions">
+          <button id="btn-open-groceries" class="btn btn-primary" type="button">📜 Liste de courses</button>
+          <button id="btn-clear-planner" class="btn btn-secondary" type="button">Vider la semaine</button>
+        </div>
+      </div>
+      <div id="planner-grid" class="planner-grid"></div>
     </section>
   </main>
 
@@ -212,7 +230,7 @@
           <textarea id="field-notes" rows="2" placeholder="Ex: Remplacer la crème par du yaourt grec."></textarea>
         </label>
 
-        <div class="modal-footer">
+<div class="modal-footer">
           <button class="btn btn-secondary" data-close="modal-editor" type="button">Annuler</button>
           <button class="btn btn-primary" type="submit">Consigner dans le grimoire</button>
         </div>
@@ -234,12 +252,32 @@
         <label>Mot de passe famille
           <input id="sync-token" type="password" required placeholder="Saisis le code famille">
         </label>
+        <label>Code PIN « Bannir » (4 chiffres)
+          <input id="sync-pin" type="password" inputmode="numeric" pattern="\d{4}" maxlength="4" placeholder="Ex: 1234">
+        </label>
         <button class="btn btn-primary" type="submit">Enregistrer et synchroniser</button>
       </form>
       <p id="sync-status" class="sync-status"></p>
     </div>
   </div>
 
+  <!-- MODALE LISTE DE COURSES -->
+<!-- MODALE LISTE DE COURSES -->
+  <div id="modal-groceries" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Liste de Courses Agrégée</h2>
+        <button class="btn-close" data-close="modal-groceries" type="button">✕</button>
+      </div>
+      <p class="grocery-hint">Sélectionne les formules à inclure (celles du Semainier sont pré-cochées) :</p>
+      <div id="grocery-recipe-selector" class="grocery-recipe-selector"></div>
+      <div class="grocery-output-header">
+        <h3>Ingrédients regroupés</h3>
+        <button id="btn-copy-groceries" class="btn btn-primary" type="button">Copier la liste</button>
+      </div>
+      <textarea id="grocery-list-output" class="grocery-list-output" rows="10" readonly></textarea>
+    </div>
+  </div>
   <div id="timer-dock" class="timer-dock" aria-live="polite"></div>
   <script src="db.js"></script>
   <script src="app.js"></script>
