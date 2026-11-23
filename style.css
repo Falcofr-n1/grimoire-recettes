@@ -874,3 +874,212 @@ body {
   .form-row, .form-row.three-cols { grid-template-columns: 1fr; }
   .grimoire-overlay.is-opening .grimoire-3d { transform: translateX(8%) scale(1.04); }
 }
+
+
+/* =========================================================
+   MODE CUISINE : CHAUDRON, PORTIONS, MASQUAGE, MINUTEURS & TAP
+   ========================================================= */
+
+/* 1. Bouton Chaudron (Wake Lock) */
+.btn-cauldron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+}
+
+.btn-cauldron.is-active {
+  background: radial-gradient(circle at 50% 35%, #5c3317 0%, #2b1710 100%);
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+  box-shadow: 0 0 14px rgba(232, 199, 117, 0.5);
+}
+
+/* 2. Contrôles de portions (- / +) */
+.servings-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-serving {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid rgba(124, 31, 26, 0.4);
+  border-radius: 50%;
+  background: rgba(124, 31, 26, 0.08);
+  color: var(--crimson);
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-serving:hover {
+  background: var(--crimson);
+  color: #f9ebd0;
+}
+
+/* 3. Masquage d'ingrédients / étapes + bouton Revenir en arrière */
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin: 0 0 14px;
+}
+
+.section-header-row .section-heading {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin: 0;
+}
+
+.btn-undo-step {
+  padding: 3px 9px;
+  border: 1px solid rgba(124, 31, 26, 0.35);
+  border-radius: 4px;
+  background: rgba(124, 31, 26, 0.08);
+  color: var(--crimson);
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.btn-undo-step:hover {
+  background: rgba(124, 31, 26, 0.18);
+}
+
+.btn-undo-step.hidden {
+  display: none;
+}
+
+.ingredients-list li,
+.steps-list li {
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.ingredients-list li:hover,
+.steps-list li:hover {
+  background: rgba(182, 146, 84, 0.16);
+}
+
+.is-masked-item {
+  display: none !important;
+}
+
+/* 4. Minuteurs intégrés & dock flottant */
+.inline-timer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  margin: 0 2px;
+  border: 1px solid rgba(124, 31, 26, 0.45);
+  border-radius: 999px;
+  background: rgba(124, 31, 26, 0.1);
+  color: var(--crimson);
+  font-family: var(--font-title);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  vertical-align: baseline;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+
+.inline-timer-btn:hover {
+  background: var(--crimson);
+  color: #f9ebd0;
+  transform: translateY(-1px);
+}
+
+.timer-dock {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+}
+
+.timer-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 14px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2b1613 0%, #170c0a 100%);
+  color: var(--gold-bright);
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.75);
+}
+
+.timer-pill.is-finished {
+  border-color: #e07a7a;
+  background: linear-gradient(135deg, #7c1f1a 0%, #3d0d0b 100%);
+  color: #fff3d6;
+  animation: timerPulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes timerPulse {
+  from { transform: scale(1); }
+  to   { transform: scale(1.04); }
+}
+
+.timer-pill-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.timer-pill-btn {
+  border: 1px solid rgba(232, 199, 117, 0.4);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+/* 5. Zones tactiles latérales sur le livre */
+.book-tap-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 22px;
+  z-index: 5;
+  cursor: pointer;
+}
+
+.book-tap-left { left: 0; }
+.book-tap-right { right: 0; }
+
+@media (max-width: 860px) {
+  .book-tap-zone { width: 16px; }
+  .timer-dock {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+  .timer-pill {
+    width: 100%;
+    font-size: 0.8rem;
+  }
+}
