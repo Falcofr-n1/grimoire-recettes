@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grimoire des Recettes Familiales</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a110d">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- PAGE DE GARDE / GRIMOIRE FERMÉ -->
+  <div id="grimoire-overlay" class="grimoire-overlay" aria-label="Couverture du grimoire">
+    <div class="arcane-dust" aria-hidden="true"></div>
+
+    <div id="grimoire-book" class="grimoire-3d" role="button" tabindex="0" aria-label="Ouvrir le grimoire">
+      <!-- Pages visibles sous la couverture pendant l'ouverture -->
+      <div class="grimoire-underpage">
+        <div class="underpage-frame">
+          <p class="underpage-exlibris">Ex Libris</p>
+          <p class="underpage-quote">« Que la flamme soit juste et le chaudron généreux. »</p>
+          <span class="underpage-ornament">✦ ❖ ✦</span>
+        </div>
+      </div>
+
+      <!-- Couverture avant qui pivote en 3D -->
+      <div class="grimoire-cover-flap">
+        <div class="cover-front">
+          <div class="cover-spine" aria-hidden="true"></div>
+          <span class="brass-corner tl" aria-hidden="true"></span>
+          <span class="brass-corner tr" aria-hidden="true"></span>
+          <span class="brass-corner bl" aria-hidden="true"></span>
+          <span class="brass-corner br" aria-hidden="true"></span>
+
+          <div class="cover-border">
+            <p class="cover-subtitle">Codex Culinaire</p>
+
+            <!-- Emblème alchimique SVG -->
+            <svg class="cover-emblem" viewBox="0 0 120 120" aria-hidden="true">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <circle cx="60" cy="60" r="42" fill="none" stroke="currentColor" stroke-width="1"/>
+              <polygon points="60,16 98,82 22,82" fill="none" stroke="currentColor" stroke-width="1.2"/>
+              <polygon points="60,104 98,38 22,38" fill="none" stroke="currentColor" stroke-width="1.2"/>
+              <circle cx="60" cy="60" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="60" cy="60" r="3" fill="currentColor"/>
+            </svg>
+
+            <h1 class="cover-title">Grimoire<br>de Famille</h1>
+            <p id="cover-recipe-count" class="cover-count">Recueil de formules &amp; potions</p>
+
+            <button id="btn-open-grimoire" class="wax-seal-btn" type="button">
+              <span class="wax-seal-glyph">✦</span>
+              <span>Ouvrir</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Intérieur de la couverture (visible quand elle s'ouvre) -->
+        <div class="cover-back" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <p class="cover-hint">Clique sur le sceau pour briser le charme</p>
+  </div>
+
+  <!-- BARRE SUPÉRIEURE -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-icon">✦</span>
+      <h1>Grimoire de Famille</h1>
+    </div>
+    <nav class="nav-actions">
+      <button id="btn-close-grimoire" class="btn btn-secondary" type="button" title="Refermer le grimoire">Couverture</button>
+      <button id="btn-view-book" class="btn btn-tab active" type="button">Feuilleter</button>
+      <button id="btn-view-grid" class="btn btn-tab" type="button">Index</button>
+      <button id="btn-new-recipe" class="btn btn-primary" type="button">+ Formule</button>
+      <label id="btn-import-label" class="btn btn-secondary" style="cursor:pointer;">
+        Importer (PDF/Word/Photo)
+        <input id="quick-import-input" type="file" accept=".pdf,.docx,.txt,.md,image/*" hidden>
+      </label>
+      <button id="btn-sync-now" class="btn btn-secondary" type="button" title="Rafraîchir depuis Google Sheets">↻</button>
+      <button id="btn-sync-config" class="btn btn-secondary" type="button">Synchro</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- VUE LIVRE -->
+    <section id="view-book" class="view active">
+      <div class="book-controls">
+        <select id="book-toc" aria-label="Sommaire des recettes"></select>
+        <div class="book-nav">
+          <button id="btn-prev-page" class="btn btn-secondary" type="button">← Folio préc.</button>
+          <span id="book-page-indicator" class="page-indicator">0 / 0</span>
+          <button id="btn-next-page" class="btn btn-secondary" type="button">Folio suiv. →</button>
+        </div>
+        <div class="book-item-actions">
+          <button id="btn-edit-current" class="btn btn-secondary" type="button">Réécrire</button>
+          <button id="btn-delete-current" class="btn btn-danger" type="button">Bannir</button>
+        </div>
+      </div>
+
+      <div class="book-binding">
+        <article id="book-spread" class="book-spread"></article>
+      </div>
+    </section>
+
+    <!-- VUE RECHERCHE -->
+    <section id="view-grid" class="view">
+      <div class="search-panel">
+        <input id="search-text" type="search" placeholder="Chercher une formule, un ingrédient, une étape, une rune...">
+        <select id="filter-category">
+          <option value="">Toutes catégories</option>
+          <option value="Entrée">Entrée</option>
+          <option value="Plat">Plat</option>
+          <option value="Accompagnement">Accompagnement</option>
+          <option value="Dessert">Dessert</option>
+          <option value="Boisson / Base">Boisson / Base</option>
+        </select>
+        <select id="filter-time">
+          <option value="">Temps total (tous)</option>
+          <option value="20">≤ 20 min</option>
+          <option value="45">≤ 45 min</option>
+          <option value="60">≤ 1 h</option>
+          <option value="120">≤ 2 h</option>
+        </select>
+        <input id="filter-exclude" type="text" placeholder="Exclure un ingrédient (ex: courgette)">
+      </div>
+      <div id="grid-stats" class="grid-stats"></div>
+      <div id="recipe-grid" class="recipe-grid"></div>
+    </section>
+  </main>
+
+  <!-- MODALE ÉDITEUR DE RECETTE -->
+  <div id="modal-editor" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="editor-title">Nouvelle formule</h2>
+        <button class="btn-close" data-close="modal-editor" type="button">✕</button>
+      </div>
+
+      <details class="import-box">
+        <summary>Coller une recette en texte brut (hors-ligne)</summary>
+        <div class="import-box-body">
+          <textarea id="raw-text-input" rows="4" placeholder="Colle ici une recette en vrac (Titre, Ingrédients, Étapes)..."></textarea>
+          <button id="btn-parse-raw" class="btn btn-secondary" type="button">Analyser et pré-remplir</button>
+        </div>
+      </details>
+
+      <form id="recipe-form" class="recipe-form">
+        <div class="form-row">
+          <label>Titre *
+            <input id="field-title" type="text" required placeholder="Ex: Poulet rôti aux herbes">
+          </label>
+          <label>Catégorie
+            <select id="field-category">
+              <option value="Plat">Plat</option>
+              <option value="Entrée">Entrée</option>
+              <option value="Accompagnement">Accompagnement</option>
+              <option value="Dessert">Dessert</option>
+              <option value="Boisson / Base">Boisson / Base</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row three-cols">
+          <label>Préparation (min)
+            <input id="field-prep" type="number" min="0" value="15">
+          </label>
+          <label>Cuisson (min)
+            <input id="field-cook" type="number" min="0" value="30">
+          </label>
+          <label>Portions
+            <input id="field-servings" type="number" min="1" value="4">
+          </label>
+        </div>
+
+        <label>Tags (séparés par des virgules)
+          <input id="field-tags" type="text" placeholder="rapide, famille, thermomix, hiver">
+        </label>
+
+        <label>Ingrédients (1 par ligne) *
+          <textarea id="field-ingredients" rows="6" required placeholder="400 g de riz&#10;2 filets de poulet&#10;1 oignon"></textarea>
+        </label>
+
+        <label>Étapes de préparation (1 étape par ligne) *
+          <textarea id="field-steps" rows="6" required placeholder="Couper le poulet en dés.&#10;Faire revenir l'oignon 5 minutes."></textarea>
+        </label>
+
+        <label>Notes / Astuces de famille
+          <textarea id="field-notes" rows="2" placeholder="Ex: Remplacer la crème par du yaourt grec."></textarea>
+        </label>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-close="modal-editor" type="button">Annuler</button>
+          <button class="btn btn-primary" type="submit">Consigner dans le grimoire</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODALE SYNCHRO GOOGLE SHEETS -->
+  <div id="modal-sync" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content modal-sm">
+      <div class="modal-header">
+        <h2>Synchronisation Famille</h2>
+        <button class="btn-close" data-close="modal-sync" type="button">✕</button>
+      </div>
+      <form id="sync-form" class="recipe-form">
+        <label>URL de l'API Apps Script
+          <input id="sync-url" type="url" required value="https://script.google.com/macros/s/AKfycbxvkg-BSh-PDr3dL1hjXt2pLJCuGzl_VyRe4wmLP_VTSqnvHqKi7a0iWq7AIxq2ZPdguw/exec">
+        </label>
+        <label>Mot de passe famille
+          <input id="sync-token" type="password" required placeholder="Saisis le code famille">
+        </label>
+        <button class="btn btn-primary" type="submit">Enregistrer et synchroniser</button>
+      </form>
+      <p id="sync-status" class="sync-status"></p>
+    </div>
+  </div>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
