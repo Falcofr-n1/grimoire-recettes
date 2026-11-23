@@ -57,9 +57,8 @@
     else renderBook();
   }
 
-  function renderBook() {
+function renderBook() {
     const spread = $("book-spread");
-    const toc = $("book-toc");
     const indicator = $("book-page-indicator");
     const coverCount = $("cover-recipe-count");
 
@@ -68,10 +67,6 @@
         ? `${recipes.length} formule${recipes.length > 1 ? "s" : ""} consignée${recipes.length > 1 ? "s" : ""}`
         : "Recueil de formules & potions";
     }
-
-    toc.innerHTML = recipes.map((r, i) =>
-      `<option value="${i}" ${i === currentIndex ? "selected" : ""}>${i + 1}. ${escapeHtml(r.title)}</option>`
-    ).join("");
 
     if (recipes.length === 0) {
       indicator.textContent = "0 / 0";
@@ -86,10 +81,18 @@
     const totalTime = (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0);
     indicator.textContent = `${currentIndex + 1} / ${recipes.length}`;
 
+    const titleOptions = recipes.map((item, i) =>
+      `<option value="${i}" ${i === currentIndex ? "selected" : ""}>${escapeHtml(item.title)}</option>`
+    ).join("");
+
     spread.innerHTML = `
       <div class="book-page book-page-left">
         <span class="recipe-category">${escapeHtml(r.category)}</span>
-        <h2 class="recipe-title">${escapeHtml(r.title)}</h2>
+        <div class="recipe-title-wrapper">
+          <select id="book-toc" class="recipe-title-select" aria-label="Changer de formule">
+            ${titleOptions}
+          </select>
+        </div>
         <div class="recipe-meta">
           <span>⏱ Prépa : <strong>${r.prepTime} min</strong></span>
           <span>🔥 Cuisson : <strong>${r.cookTime} min</strong></span>
@@ -110,6 +113,14 @@
         ${r.notes ? `<div class="recipe-notes"><strong>Notes de l'alchimiste :</strong><br>${escapeHtml(r.notes)}</div>` : ""}
       </div>
     `;
+
+    $("book-toc").addEventListener("change", (e) => {
+      const nextIdx = Number(e.target.value);
+      const dir = nextIdx >= currentIndex ? "next" : "prev";
+      currentIndex = nextIdx;
+      renderBook();
+      animatePageTurn(dir);
+    });
   }
 
   function renderGrid() {
