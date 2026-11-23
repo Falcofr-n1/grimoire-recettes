@@ -1512,10 +1512,13 @@ body.night-parchment .card-meta {
     margin: 12mm;
   }
 
+  html,
   body,
   body.night-parchment {
     background: #ffffff !important;
     color: #1f130a !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   .grimoire-overlay,
@@ -1530,10 +1533,17 @@ body.night-parchment .card-meta {
     display: none !important;
   }
 
-  .container {
+  .container,
+  #view-book,
+  .book-binding {
+    display: block !important;
     max-width: 100% !important;
+    width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+    perspective: none !important;
+    transform: none !important;
+    overflow: visible !important;
   }
 
   .book-spread {
@@ -1546,6 +1556,17 @@ body.night-parchment .card-meta {
     background: #fbf4e4 !important;
     color: #24140b !important;
     box-shadow: none !important;
+    transform: none !important;
+    animation: none !important;
+    overflow: visible !important;
+  }
+
+  .book-page,
+  .book-page-left,
+  .book-page-right {
+    transform: none !important;
+    overflow: visible !important;
+    height: auto !important;
   }
 
   .book-page-left {
