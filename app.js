@@ -338,7 +338,6 @@
       });
     });
   }
-
   function renderGrid() {
     const searchEl = $("search-text");
     const grid = $("recipe-grid");
@@ -400,9 +399,6 @@
     });
   }
 
-  /* =========================================================
-     SEMAINIER & LISTE DE COURSES AGRÉGÉE
-     ========================================================= */
   function buildPlannerSelectOptions(selectedId) {
     const emptyOpt = `<option value="">— Libre —</option>`;
     const knownCats = CATEGORY_RUNES.map((c) => c.name);
