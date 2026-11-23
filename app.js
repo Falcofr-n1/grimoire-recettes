@@ -235,12 +235,12 @@ if (recipes.length === 0) {
         </div>
         ${r.tags && r.tags.length ? `<div class="tag-list">${r.tags.map((t) => `<span class="tag">#${escapeHtml(t)}</span>`).join("")}</div>` : ""}
         ${equipmentHtml}
-        <div class="section-header-row">
+       <div class="section-header-row">
           <h3 class="section-heading">Ingrédients</h3>
-          <button type="button" id="btn-undo-ing" class="btn-undo-step hidden">↶ Revenir</button>
+          <button type="button" id="btn-toggle-ingredients" class="btn-undo-step" aria-expanded="true">Masquer</button>
         </div>
-        <ul class="ingredients-list">
-          ${r.ingredients.map((ing) => `<li title="Cliquer pour masquer">${formatScaledIngredient(ing, ratio)}</li>`).join("")}
+        <ul id="ingredients-list" class="ingredients-list">
+          ${r.ingredients.map((ing) => `<li>${formatScaledIngredient(ing, ratio)}</li>`).join("")}
         </ul>
       </div>
       <div class="book-page book-page-right">
@@ -280,20 +280,13 @@ if (recipes.length === 0) {
     spread.querySelector(".book-tap-left").addEventListener("click", goPrev);
     spread.querySelector(".book-tap-right").addEventListener("click", goNext);
 
-    // Masquage + pile d'annulation (Ingrédients)
-    const hiddenIngStack = [];
-    const undoIngBtn = $("btn-undo-ing");
-    spread.querySelectorAll(".ingredients-list li").forEach((li) => {
-      li.addEventListener("click", () => {
-        li.classList.add("is-masked-item");
-        hiddenIngStack.push(li);
-        undoIngBtn.classList.remove("hidden");
-      });
-    });
-    undoIngBtn.addEventListener("click", () => {
-      const last = hiddenIngStack.pop();
-      if (last) last.classList.remove("is-masked-item");
-      if (hiddenIngStack.length === 0) undoIngBtn.classList.add("hidden");
+    // Plier / déplier tout le bloc Ingrédients
+    const toggleIngBtn = $("btn-toggle-ingredients");
+    const ingList = $("ingredients-list");
+    toggleIngBtn.addEventListener("click", () => {
+      const collapsed = ingList.classList.toggle("is-collapsed");
+      toggleIngBtn.textContent = collapsed ? "Afficher" : "Masquer";
+      toggleIngBtn.setAttribute("aria-expanded", String(!collapsed));
     });
 
     // Masquage + pile d'annulation (Étapes)
