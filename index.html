@@ -68,24 +68,30 @@
     <p class="cover-hint">Clique sur le sceau pour briser le charme</p>
   </div>
 
-  <!-- BARRE SUPÉRIEURE -->
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-icon">✦</span>
-      <h1>Grimoire de Famille</h1>
+ <!-- BARRE SUPÉRIEURE -->
+  <header id="topbar" class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-icon">✦</span>
+        <h1>Grimoire de Famille</h1>
+      </div>
+      <nav class="nav-actions">
+        <button id="btn-close-grimoire" class="btn btn-secondary" type="button" title="Refermer le grimoire">Couverture</button>
+        <button id="btn-view-book" class="btn btn-tab active" type="button">Feuilleter</button>
+        <button id="btn-view-grid" class="btn btn-tab" type="button">Index</button>
+        <button id="btn-new-recipe" class="btn btn-primary" type="button">+ Formule</button>
+        <label id="btn-import-label" class="btn btn-secondary" style="cursor:pointer;">
+          Importer (PDF/Word/Photo)
+          <input id="quick-import-input" type="file" accept=".pdf,.docx,.txt,.md,image/*" hidden>
+        </label>
+        <button id="btn-sync-now" class="btn btn-secondary" type="button" title="Rafraîchir depuis Google Sheets">↻</button>
+        <button id="btn-sync-config" class="btn btn-secondary" type="button">Synchro</button>
+      </nav>
     </div>
-    <nav class="nav-actions">
-      <button id="btn-close-grimoire" class="btn btn-secondary" type="button" title="Refermer le grimoire">Couverture</button>
-      <button id="btn-view-book" class="btn btn-tab active" type="button">Feuilleter</button>
-      <button id="btn-view-grid" class="btn btn-tab" type="button">Index</button>
-      <button id="btn-new-recipe" class="btn btn-primary" type="button">+ Formule</button>
-      <label id="btn-import-label" class="btn btn-secondary" style="cursor:pointer;">
-        Importer (PDF/Word/Photo)
-        <input id="quick-import-input" type="file" accept=".pdf,.docx,.txt,.md,image/*" hidden>
-      </label>
-      <button id="btn-sync-now" class="btn btn-secondary" type="button" title="Rafraîchir depuis Google Sheets">↻</button>
-      <button id="btn-sync-config" class="btn btn-secondary" type="button">Synchro</button>
-    </nav>
+    <button id="btn-toggle-topbar" class="topbar-toggle" type="button" aria-expanded="true" title="Rétracter ou déployer le bandeau">
+      <span id="topbar-toggle-icon">▲</span>
+      <span id="topbar-toggle-label">Rétracter</span>
+    </button>
   </header>
 
   <main class="container">
