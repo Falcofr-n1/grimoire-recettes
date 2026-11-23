@@ -1,45 +1,38 @@
-const CACHE_NAME = "grimoire-v1";
+const CACHE_NAME = "grimoire-v7";
 const ASSETS = [
   "./",
   "./index.html",
   "./style.css",
-  "./app.js",
   "./db.js",
-  "./manifest.json"
+  "./app.js",
+  "./manifest.json",
+  "./icon.png"
 ];
 
 self.addEventListener("install", (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
-
-  // Ne jamais mettre en cache les appels API (Google Apps Script) ni les requêtes POST
-  if (req.method !== "GET" || url.origin !== self.location.origin) {
-    return;
-  }
-
+  if (event.request.method !== "GET") return;
   event.respondWith(
-    fetch(req)
+    fetch(event.request)
       .then((res) => {
         const copy = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         return res;
       })
-      .catch(() => caches.match(req))
+      .catch(() => caches.match(event.request))
   );
 });
