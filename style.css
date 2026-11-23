@@ -1602,3 +1602,36 @@ body.night-parchment .card-meta {
 #view-planner.active {
   display: block;
 }
+.grocery-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 10px 12px;
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  background: #140b09;
+}
+
+.grocery-checklist li {
+  padding: 6px 4px;
+  border-bottom: 1px solid rgba(201, 162, 75, 0.14);
+}
+
+.grocery-checklist li:last-child {
+  border-bottom: none;
+}
+
+.grocery-checklist label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #f5e6c8;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.grocery-checklist input:checked + span {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
