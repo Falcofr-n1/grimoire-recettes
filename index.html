@@ -117,6 +117,7 @@
   <button id="btn-night-parchment" class="btn btn-secondary btn-night-toggle" type="button" aria-pressed="false" title="Basculer en mode Parchemin Nocturne">
             <span id="night-parchment-icon">☾</span>
           </button>
+  <button id="btn-share-recipe" class="btn btn-secondary" type="button" title="Partager la fiche en image (WhatsApp, etc.)">📤</button>
   <button id="btn-print-recipe" class="btn btn-secondary" type="button" title="Imprimer ou enregistrer en PDF propre">🖨</button>
           <button id="btn-edit-current" class="btn btn-secondary" type="button">Réécrire</button>
           <button id="btn-delete-current" class="btn btn-danger" type="button">Bannir</button>
@@ -280,7 +281,8 @@
     </div>
   </div>
   <div id="timer-dock" class="timer-dock" aria-live="polite"></div>
-  <script src="db.js?v=12"></script>
-<script src="app.js?v=12"></script>
+ <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="db.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
