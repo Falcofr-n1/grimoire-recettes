@@ -1507,89 +1507,7 @@ body.night-parchment .card-meta {
 
 /* 5. Export PDF / Impression Fiche Parchemin A4 */
 @media print {
-  @page {
-    size: A4 portrait;
-    margin: 12mm;
-  }
-
-  html,
-  body,
-  body.night-parchment {
-    background: #ffffff !important;
-    color: #1f130a !important;
-    height: auto !important;
-    overflow: visible !important;
-  }
-
-  .grimoire-overlay,
-  .topbar,
-  .book-controls,
-  .rune-bookmarks,
-  .book-tap-zone,
-  .btn-serving,
-  .btn-undo-step,
-  .timer-dock,
-  .modal {
-    display: none !important;
-  }
-
-  .container,
-  #view-book,
-  .book-binding {
-    display: block !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    perspective: none !important;
-    transform: none !important;
-    overflow: visible !important;
-  }
-
-  .book-spread {
-    display: grid !important;
-    grid-template-columns: 1fr 1.15fr !important;
-    gap: 18px !important;
-    padding: 18px !important;
-    border: 2px solid #8a6428 !important;
-    border-radius: 8px !important;
-    background: #fbf4e4 !important;
-    color: #24140b !important;
-    box-shadow: none !important;
-    transform: none !important;
-    animation: none !important;
-    overflow: visible !important;
-  }
-
-  .book-page,
-  .book-page-left,
-  .book-page-right {
-    transform: none !important;
-    overflow: visible !important;
-    height: auto !important;
-  }
-
-  .book-page-left {
-    border-right: 1px solid rgba(138, 100, 40, 0.35) !important;
-    padding-right: 14px !important;
-  }
-
-  .recipe-title-select {
-    appearance: none !important;
-    background-image: none !important;
-    border-bottom: 1px solid #8a6428 !important;
-    color: #24140b !important;
-    font-size: 1.55rem !important;
-  }
-
-  .ingredients-list.is-collapsed {
-    display: block !important;
-  }
-
-  .is-masked-item {
-    display: list-item !important;
-  }
-
+  /* ... tout le contenu jusqu'à ... */
   .inline-timer-btn {
     border: none !important;
     background: transparent !important;
@@ -1598,7 +1516,7 @@ body.night-parchment .card-meta {
     font-family: inherit !important;
     font-size: inherit !important;
   }
-}
+}  <-- ARRÊTE TA SÉLECTION ICI
 #view-planner.active {
   display: block;
 }
