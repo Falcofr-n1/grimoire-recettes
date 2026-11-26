@@ -338,6 +338,7 @@
       });
     });
   }
+
   function renderGrid() {
     const searchEl = $("search-text");
     const grid = $("recipe-grid");
@@ -829,6 +830,99 @@
     } catch (_) {}
   }
 
+  async function shareCurrentRecipe() {
+    const r = recipes[currentIndex];
+    const spread = $("book-spread");
+    const btn = $("btn-share-recipe");
+    if (!r || !spread) return;
+
+    const originalLabel = btn ? btn.innerHTML : "📤";
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "⏳";
+    }
+
+    const clone = spread.cloneNode(true);
+    clone.classList.add("is-sharing-capture");
+    clone.style.position = "fixed";
+    clone.style.left = "-9999px";
+    clone.style.top = "0";
+
+    const selectEl = clone.querySelector(".recipe-title-select");
+    if (selectEl) {
+      const titleDiv = document.createElement("div");
+      titleDiv.className = "recipe-title";
+      titleDiv.style.fontSize = "1.45rem";
+      titleDiv.style.margin = "8px 0 10px";
+      titleDiv.style.borderBottom = "1px solid #8a6428";
+      titleDiv.style.paddingBottom = "4px";
+      titleDiv.textContent = r.title;
+      selectEl.parentNode.replaceChild(titleDiv, selectEl);
+    }
+
+    const ingList = clone.querySelector(".ingredients-list");
+    if (ingList) ingList.classList.remove("is-collapsed");
+    clone.querySelectorAll(".is-masked-item").forEach((el) => el.classList.remove("is-masked-item"));
+
+    document.body.appendChild(clone);
+
+    try {
+      if (typeof html2canvas === "undefined") {
+        throw new Error("Module image non chargé.");
+      }
+
+      const canvas = await html2canvas(clone, {
+        scale: 2,
+        backgroundColor: "#fbf4e4",
+        useCORS: true
+      });
+
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+      const safeName = r.title.toLowerCase().replace(/[^a-z0-9àâäéèêëïîôöùûüç]+/gi, "-").replace(/^-|-$/g, "");
+      const file = new File([blob], `${safeName || "recette"}.png`, { type: "image/png" });
+
+      const shareData = {
+        title: r.title,
+        text: `📜 *${r.title}* (${currentServings} pers.) — Grimoire de Famille`,
+        files: [file]
+      };
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share(shareData);
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${safeName || "recette"}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        const textFallback = [
+          `📜 *${r.title}* (${currentServings} pers.)`,
+          "",
+          "*Ingrédients :*",
+          ...Array.from(clone.querySelectorAll(".ingredients-list li")).map((li) => `• ${li.textContent.trim()}`),
+          "",
+          "*Préparation :*",
+          ...Array.from(clone.querySelectorAll(".steps-list li")).map((li, i) => `${i + 1}. ${li.textContent.trim()}`)
+        ].join("\n");
+
+        try { await navigator.clipboard.writeText(textFallback); } catch (_) {}
+        alert("Fiche image téléchargée et texte copié dans le presse-papiers !");
+      }
+    } catch (err) {
+      if (err && err.name !== "AbortError") {
+        alert(`Impossible de partager : ${err.message}`);
+      }
+    } finally {
+      clone.remove();
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalLabel;
+      }
+    }
+  }
+
   function bindEvents() {
     RecipeDB.onSyncStatusChange((status) => {
       const dot = $("sync-dot");
@@ -943,6 +1037,7 @@
       });
     }
 
+    on("btn-share-recipe", "click", shareCurrentRecipe);
     on("btn-print-recipe", "click", () => {
       if (!recipes[currentIndex]) return;
       document.body.classList.remove("night-parchment");
