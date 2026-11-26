@@ -63,7 +63,6 @@ body {
   pointer-events: none;
 }
 
-/* Poussière dorée flottante */
 .arcane-dust {
   position: absolute;
   inset: 0;
@@ -97,7 +96,6 @@ body {
   transform: translateY(-4px) scale(1.015);
 }
 
-/* Tranche de pages visible sur le côté droit du livre fermé */
 .grimoire-3d::after {
   content: "";
   position: absolute;
@@ -116,7 +114,6 @@ body {
   box-shadow: inset 3px 0 6px rgba(0, 0, 0, 0.35);
 }
 
-/* Page de parchemin révélée sous la couverture */
 .grimoire-underpage {
   position: absolute;
   inset: 6px 4px 6px 8px;
@@ -166,7 +163,6 @@ body {
   letter-spacing: 0.35em;
 }
 
-/* Volet de couverture 3D */
 .grimoire-cover-flap {
   position: absolute;
   inset: 0;
@@ -196,7 +192,6 @@ body {
   display: flex;
 }
 
-/* Dos relié avec nervures */
 .cover-spine {
   position: absolute;
   top: 0;
@@ -216,7 +211,6 @@ body {
   border-right: 1px solid rgba(201, 162, 75, 0.25);
 }
 
-/* Coins en laiton */
 .brass-corner {
   position: absolute;
   width: 26px;
@@ -282,7 +276,6 @@ body {
   color: #cfb78a;
 }
 
-/* Sceau de cire pour ouvrir */
 .wax-seal-btn {
   display: inline-flex;
   align-items: center;
@@ -332,7 +325,6 @@ body {
   transition: opacity 0.35s ease;
 }
 
-/* État d'ouverture */
 .grimoire-overlay.is-opening .grimoire-3d {
   transform: translateX(18%) scale(1.12);
 }
@@ -505,7 +497,6 @@ body {
   margin-bottom: 18px;
 }
 
-/* Sélecteur intégré à la place du titre sur le parchemin */
 .recipe-title-wrapper {
   position: relative;
   margin: 12px 0 14px;
@@ -559,7 +550,6 @@ body {
   text-align: center;
 }
 
-/* Reliure en cuir autour de la double page */
 .book-binding {
   padding: 12px;
   border-radius: 16px;
@@ -583,7 +573,6 @@ body {
   box-shadow: inset 0 0 42px rgba(74, 46, 20, 0.28);
 }
 
-/* Ombre centrale de reliure */
 .book-spread::after {
   content: "";
   position: absolute;
@@ -601,7 +590,6 @@ body {
   pointer-events: none;
 }
 
-/* Animation de changement de folio */
 .book-spread.turn-next { animation: folioNext 0.32s ease-out; }
 .book-spread.turn-prev { animation: folioPrev 0.32s ease-out; }
 
@@ -875,12 +863,9 @@ body {
   .grimoire-overlay.is-opening .grimoire-3d { transform: translateX(8%) scale(1.04); }
 }
 
-
 /* =========================================================
    MODE CUISINE : CHAUDRON, PORTIONS, MASQUAGE, MINUTEURS & TAP
    ========================================================= */
-
-/* 1. Bouton Chaudron (Wake Lock) */
 .btn-cauldron {
   display: inline-flex;
   align-items: center;
@@ -895,7 +880,6 @@ body {
   box-shadow: 0 0 14px rgba(232, 199, 117, 0.5);
 }
 
-/* 2. Contrôles de portions (- / +) */
 .servings-control {
   display: inline-flex;
   align-items: center;
@@ -923,7 +907,6 @@ body {
   color: #f9ebd0;
 }
 
-/* 3. Masquage d'ingrédients / étapes + bouton Revenir en arrière */
 .section-header-row {
   display: flex;
   align-items: center;
@@ -961,14 +944,12 @@ body {
   display: none;
 }
 
-.ingredients-list li,
 .steps-list li {
   cursor: pointer;
   border-radius: 4px;
   transition: background 0.15s;
 }
 
-.ingredients-list li:hover,
 .steps-list li:hover {
   background: rgba(182, 146, 84, 0.16);
 }
@@ -977,7 +958,6 @@ body {
   display: none !important;
 }
 
-/* 4. Minuteurs intégrés & dock flottant */
 .inline-timer-btn {
   display: inline-flex;
   align-items: center;
@@ -1058,7 +1038,6 @@ body {
   cursor: pointer;
 }
 
-/* 5. Zones tactiles latérales sur le livre */
 .book-tap-zone {
   position: absolute;
   top: 0;
@@ -1087,8 +1066,6 @@ body {
 /* =========================================================
    THÈME 1 : SIGNETS RUNIQUES, LETTRINE, SCEAUX & PARCHEMIN NOCTURNE
    ========================================================= */
-
-/* 1. Signets runiques sur le grimoire */
 .book-binding {
   position: relative;
 }
@@ -1139,7 +1116,6 @@ body {
   color: var(--gold-bright);
 }
 
-/* 2. Séparateurs runiques dans le menu déroulant */
 .recipe-title-select optgroup {
   background: #e5d1a8;
   color: var(--crimson);
@@ -1148,7 +1124,6 @@ body {
   font-weight: 700;
 }
 
-/* 3. Lettrine enluminée sur la première étape */
 .steps-list li:first-child::first-letter {
   float: left;
   font-family: var(--font-display);
@@ -1159,7 +1134,6 @@ body {
   text-shadow: 1px 1px 0 rgba(201, 162, 75, 0.55);
 }
 
-/* 4. Sceaux d'équipement alchimique */
 .equipment-seals {
   display: flex;
   flex-wrap: wrap;
@@ -1182,7 +1156,6 @@ body {
   letter-spacing: 0.04em;
 }
 
-/* 5. Mode Parchemin Nocturne */
 .btn-night-toggle.is-active {
   background: radial-gradient(circle at 50% 35%, #2f3b52 0%, #151b26 100%);
   border-color: var(--gold-bright);
@@ -1289,7 +1262,7 @@ body.night-parchment .card-meta {
     background: linear-gradient(to bottom, #211c19 0%, #181412 100%);
   }
 }
-/* Bloc Ingrédients pliable en entier (sans masquage ligne par ligne) */
+
 .ingredients-list li {
   cursor: default;
 }
@@ -1301,11 +1274,10 @@ body.night-parchment .card-meta {
 .ingredients-list.is-collapsed {
   display: none;
 }
-/* =========================================================
-   BLOCS 3 & 4 : PASTILLE SYNCHRO, FILTRES, SEMAINIER, COURSES & PDF
-   ========================================================= */
 
-/* 1. Pastille d'état de synchronisation sur ↻ */
+/* =========================================================
+   BLOCS 3 & 4 : PASTILLE SYNCHRO, FILTRES, SEMAINIER & COURSES
+   ========================================================= */
 .btn-sync-status {
   position: relative;
   padding-right: 22px;
@@ -1333,7 +1305,6 @@ body.night-parchment .card-meta {
   box-shadow: 0 0 6px rgba(229, 57, 53, 0.8);
 }
 
-/* 2. Filtres rapides dans l'Index */
 .quick-filters {
   display: flex;
   flex-wrap: wrap;
@@ -1364,7 +1335,6 @@ body.night-parchment .card-meta {
   color: #fff3d6;
 }
 
-/* 3. Vue Semainier */
 .planner-header {
   display: flex;
   flex-wrap: wrap;
@@ -1450,7 +1420,6 @@ body.night-parchment .card-meta {
   font-size: 0.95rem;
 }
 
-/* 4. Modale Liste de courses */
 .grocery-hint {
   margin: 0 0 10px;
   color: #d6c096;
@@ -1505,21 +1474,10 @@ body.night-parchment .card-meta {
   line-height: 1.45;
 }
 
-/* 5. Export PDF / Impression Fiche Parchemin A4 */
-@media print {
-  /* ... tout le contenu jusqu'à ... */
-  .inline-timer-btn {
-    border: none !important;
-    background: transparent !important;
-    padding: 0 !important;
-    color: inherit !important;
-    font-family: inherit !important;
-    font-size: inherit !important;
-  }
-}  <-- ARRÊTE TA SÉLECTION ICI
 #view-planner.active {
   display: block;
 }
+
 .grocery-checklist {
   list-style: none;
   margin: 0;
@@ -1552,4 +1510,280 @@ body.night-parchment .card-meta {
 .grocery-checklist input:checked + span {
   text-decoration: line-through;
   opacity: 0.5;
+}
+
+/* =========================================================
+   5. CAPTURE PARTAGE WHATSAPP (FORÇAGE PARCHEMIN CLAIR)
+   ========================================================= */
+body .book-spread.is-sharing-capture,
+body.night-parchment .book-spread.is-sharing-capture {
+  width: 780px !important;
+  min-height: auto !important;
+  grid-template-columns: 1fr 1.2fr !important;
+  background: radial-gradient(ellipse at center, #fdfaf2 55%, #efe0c1 100%) !important;
+  border: 2px solid #8a6428 !important;
+  box-shadow: inset 0 0 0 4px #fdfaf2, inset 0 0 0 5px rgba(138, 100, 40, 0.45) !important;
+  color: #24140b !important;
+  border-radius: 6px !important;
+}
+
+body.night-parchment .book-spread.is-sharing-capture .book-page-left {
+  border-right: 1px solid rgba(112, 79, 44, 0.25) !important;
+}
+
+body.night-parchment .book-spread.is-sharing-capture .recipe-category {
+  background: rgba(124, 31, 26, 0.1) !important;
+  border-color: rgba(124, 31, 26, 0.3) !important;
+  color: #7c1f1a !important;
+}
+
+body.night-parchment .book-spread.is-sharing-capture .recipe-meta {
+  color: #65503e !important;
+  border-color: #cbb48b !important;
+}
+
+body.night-parchment .book-spread.is-sharing-capture .section-heading,
+body.night-parchment .book-spread.is-sharing-capture .steps-list li:first-child::first-letter,
+body.night-parchment .book-spread.is-sharing-capture .steps-list li::marker {
+  color: #7c1f1a !important;
+}
+
+body.night-parchment .book-spread.is-sharing-capture .section-header-row {
+  border-bottom-color: #cbb48b !important;
+}
+
+body.night-parchment .book-spread.is-sharing-capture .ingredients-list li {
+  border-bottom-color: rgba(124, 93, 56, 0.35) !important;
+}
+
+body.night-parchment .book-spread.is-sharing-capture .tag {
+  background: rgba(56, 82, 65, 0.12) !important;
+  border-color: rgba(56, 82, 65, 0.28) !important;
+  color: #385241 !important;
+}
+
+body.night-parchment .book-spread.is-sharing-capture .equip-seal {
+  background: rgba(201, 162, 75, 0.16) !important;
+  border-color: rgba(158, 116, 43, 0.45) !important;
+  color: #4b2e16 !important;
+}
+
+body.night-parchment .book-spread.is-sharing-capture .recipe-notes {
+  background: rgba(182, 146, 84, 0.16) !important;
+  border-color: rgba(158, 116, 43, 0.35) !important;
+  border-left-color: #7c1f1a !important;
+  color: #271a11 !important;
+}
+
+body.night-parchment .book-spread.is-sharing-capture .inline-timer-btn {
+  background: rgba(124, 31, 26, 0.1) !important;
+  border-color: rgba(124, 31, 26, 0.45) !important;
+  color: #7c1f1a !important;
+}
+
+.book-spread.is-sharing-capture .book-page {
+  padding: 22px 24px !important;
+}
+
+.book-spread.is-sharing-capture .btn-serving,
+.book-spread.is-sharing-capture .btn-undo-step,
+.book-spread.is-sharing-capture .book-tap-zone {
+  display: none !important;
+}
+
+/* =========================================================
+   6. IMPRESSION A4 PARCHEMIN ÉCO-ENCRE (SANS BANDEAU)
+   ========================================================= */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 9mm;
+  }
+
+  html,
+  body,
+  body.night-parchment {
+    background: #ffffff !important;
+    color: #1a1109 !important;
+    font-size: 9.8pt !important;
+    line-height: 1.35 !important;
+    height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  header,
+  .topbar,
+  .topbar-inner,
+  .topbar-toggle,
+  .grimoire-overlay,
+  .book-controls,
+  .book-nav,
+  .book-item-actions,
+  .rune-bookmarks,
+  .book-tap-zone,
+  .btn-serving,
+  .btn-undo-step,
+  .timer-dock,
+  .modal {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .container,
+  #view-book,
+  .book-binding {
+    display: block !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  .book-spread {
+    display: grid !important;
+    grid-template-columns: 0.85fr 1.15fr !important;
+    gap: 14px !important;
+    min-height: auto !important;
+    padding: 14px 16px !important;
+    border: 1.5pt solid #7a5824 !important;
+    outline: 0.5pt solid #b5945b !important;
+    outline-offset: -4pt !important;
+    border-radius: 4px !important;
+    background: radial-gradient(ellipse at center, #ffffff 68%, #f4ead5 100%) !important;
+    color: #1a1109 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .book-spread::after {
+    display: none !important;
+  }
+
+  .book-page,
+  .book-page-left,
+  .book-page-right {
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .book-page-left {
+    border-right: 1pt dashed rgba(122, 88, 36, 0.45) !important;
+    padding-right: 12px !important;
+  }
+
+  .recipe-category {
+    font-size: 7pt !important;
+    padding: 1px 6px !important;
+    background: transparent !important;
+    border: 0.6pt solid #7c1f1a !important;
+  }
+
+  .recipe-title-wrapper {
+    margin: 6px 0 8px !important;
+  }
+
+  .recipe-title-select {
+    appearance: none !important;
+    background-image: none !important;
+    border-bottom: 1pt solid #7a5824 !important;
+    color: #1a1109 !important;
+    font-size: 14.5pt !important;
+    line-height: 1.15 !important;
+    padding: 0 0 4px 0 !important;
+  }
+
+  .recipe-meta {
+    gap: 8px !important;
+    padding: 5px 0 !important;
+    margin-bottom: 8px !important;
+    font-size: 8.8pt !important;
+  }
+
+  .tag-list,
+  .equipment-seals {
+    margin-bottom: 8px !important;
+    gap: 4px !important;
+  }
+
+  .tag,
+  .equip-seal {
+    background: transparent !important;
+    border: 0.5pt solid #8a7356 !important;
+    color: #3a2b1c !important;
+    font-size: 7pt !important;
+    padding: 1px 6px !important;
+  }
+
+  .section-header-row {
+    margin-bottom: 6px !important;
+    padding-bottom: 3px !important;
+  }
+
+  .section-heading {
+    font-size: 10pt !important;
+  }
+
+  .ingredients-list.is-collapsed {
+    display: block !important;
+  }
+
+  .ingredients-list li {
+    padding: 2.5px 0 2.5px 13px !important;
+    font-size: 9.3pt !important;
+    border-bottom: 0.4pt dotted rgba(122, 88, 36, 0.35) !important;
+  }
+
+  .ingredients-list li::before {
+    top: 3px !important;
+    font-size: 6.5pt !important;
+  }
+
+  .steps-list {
+    padding-left: 16px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .steps-list li {
+    margin-bottom: 6px !important;
+    padding-left: 3px !important;
+    break-inside: avoid;
+  }
+
+  .steps-list li:first-child::first-letter {
+    font-size: 18pt !important;
+    padding: 1px 5px 0 0 !important;
+    text-shadow: none !important;
+  }
+
+  .is-masked-item {
+    display: list-item !important;
+  }
+
+  .inline-timer-btn {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    color: inherit !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: 600 !important;
+  }
+
+  .recipe-notes {
+    background: transparent !important;
+    border: 0.6pt solid #8a6428 !important;
+    border-left: 2.5pt solid #7c1f1a !important;
+    padding: 6px 9px !important;
+    font-size: 8.8pt !important;
+    break-inside: avoid;
+  }
 }
